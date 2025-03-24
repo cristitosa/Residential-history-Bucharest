@@ -1,9 +1,0 @@
-streamlit
-folium
-pandas
-openpyxl
-streamlit-folium
-selenium
-imageio
-pillow
-webdriver-manager
