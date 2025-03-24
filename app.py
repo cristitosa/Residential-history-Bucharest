@@ -5,15 +5,16 @@ import pandas as pd
 import streamlit as st
 from streamlit_folium import st_folium
 from folium.plugins import FloatImage
+from branca.element import Template, MacroElement  # FIX for Legend
 
-# Define file paths
+# file paths
 coord_file_path = "TS_Coord_Res.csv"
 trajectory_file_path = "Baza_Life_Trajectory.xlsx"
 
-# Define bounding box for Bucharest metro area
+# bounding box for Bucharest metro area
 bounding_box = [(44.310548, 25.900933), (44.660081, 26.283315)]  # [(min_lat, min_long), (max_lat, max_long)]
 
-# Years for animation
+# Years 
 years_to_animate = list(range(1989, 2018))
 
 # Load data
@@ -21,7 +22,7 @@ coordinates_df = pd.read_csv(coord_file_path)
 trajectory_df = pd.read_excel(trajectory_file_path, sheet_name="Sheet3")
 
 
-# Function to generate the map
+# generate the map
 def generate_map(year):
     # Filter and process the data
     coord_list = []
@@ -64,7 +65,7 @@ def generate_map(year):
         color = 'green' if row['Building Type'] == 1 else 'blue'
         folium.CircleMarker(
             location=[row['Latitude'], row['Longitude']],
-            radius=3,  # Increased for better visibility
+            radius=1,  # Increased for better visibility
             color=color,
             fill=True,
             fill_color=color,
@@ -72,28 +73,40 @@ def generate_map(year):
             tooltip=f"ID: {row['ID']}, Year: {row['Year']}, Type: {row['Building Type']}"
         ).add_to(map_year)
 
-    # Add a title and legend using HTML/CSS
+    # `MacroElement` to  inject the legend in Streamlit
     legend_html = '''
-    <div style="position: fixed; bottom: 50px; left: 50px; width: 200px; height: 90px;
-                background-color: white; z-index:9999; font-size:14px; border-radius:10px;
-                padding: 10px; box-shadow: 2px 2px 6px rgba(0,0,0,0.3);">
+    <div style="
+        position: fixed;
+        bottom: 50px;
+        left: 50px;
+        width: 200px;
+        height: 90px;
+        background-color: white;
+        z-index:9999;
+        font-size:14px;
+        border-radius:10px;
+        padding: 10px;
+        box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+        opacity: 0.9;">
     <b>Legend - Year {}</b><br>
     <i style="background:green; width: 12px; height: 12px; display: inline-block; border-radius: 50%;"></i> House 🏡<br>
     <i style="background:blue; width: 12px; height: 12px; display: inline-block; border-radius: 50%;"></i> Apartment 🏢
     </div>
     '''.format(year)
 
-    map_year.get_root().html.add_child(folium.Element(legend_html))
+    macro = MacroElement()
+    macro._template = Template(legend_html)
+    map_year.get_root().add_child(macro)  # Add legend
 
     return map_year
 
 
-# Streamlit App
-st.title("Residential History of Bucharest")
+# Streamlit 
+st.title("Residential locations in Bucharest")
 
-# Add a slider for the year selection
-year = st.slider("Select Year", min_value=1989, max_value=2017, value=2000)
+# Add slider 
+year = st.slider("Select Year", min_value=1989, max_value=2017, value=1990)
 
-# Generate and display the map
+# Generate display map
 map_object = generate_map(year)
 st_folium(map_object, width=800, height=600)
