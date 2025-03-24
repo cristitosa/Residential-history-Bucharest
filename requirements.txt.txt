@@ -1,5 +1,9 @@
 streamlit
-pandas
 folium
+pandas
 openpyxl
 streamlit-folium
+selenium
+imageio
+pillow
+webdriver-manager
