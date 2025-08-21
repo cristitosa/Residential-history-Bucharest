@@ -27,19 +27,3 @@ The visualization is generated from two primary data files:
 TS_Coord_Res.csv: This file contains the time-series geographical data, with columns for each year's latitude (YYYY_lat) and longitude (YYYY_long) for each residential ID.
 
 Baza_Life_Trajectory.xlsx: This Excel file contains the life trajectory data, mapping a response ID to a building type (1 for House, 2 for Apartment) for each year.
-
-
-## 🚀 Usage
-Once the setup is complete, run the Streamlit application with the following command:
-
-Bash
-
-streamlit run app.py
-(Assuming you have named your Python script app.py)
-
-The application will open in a new tab in your default web browser.
-
-
-Calls the generate_map() function with the year selected by the user.
-
-Renders the final map object using the st_folium() component.
